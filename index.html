@@ -2,107 +2,110 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تطبيق المحادثة السحابي - واتساب</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        html, body { height: 100%; overflow: hidden; background-color: #0b141a; color: #e9edef; }
-        body { display: flex; flex-direction: column; }
+        body, html { width: 100%; height: 100%; background-color: #0b141a; color: #e9edef; overflow: hidden; position: fixed; }
         
-        /* هيدر التطبيق */
-        .chat-header { background-color: #202c33; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; z-index: 10; flex-shrink: 0; }
-        .header-left { display: flex; align-items: center; gap: 12px; }
-        .group-avatar { width: 40px; height: 40px; background: #00a884; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 18px; }
-        .group-info h2 { font-size: 16px; color: #f1f1f2; }
-        .group-info p { font-size: 12px; color: #8696a0; }
+        .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
 
-        .header-actions { display: flex; align-items: center; gap: 8px; }
-        .admin-controls { display: flex; gap: 6px; }
-        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .search-box { background: #2a3942; border: none; padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; width: 100px; }
+        /* هيدر التطبيق */
+        .chat-header { background-color: #202c33; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; z-index: 10; flex-shrink: 0; }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .group-avatar { width: 38px; height: 38px; background: #00a884; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 16px; }
+        .group-info h2 { font-size: 15px; color: #f1f1f2; }
+        .group-info p { font-size: 11px; color: #8696a0; }
+
+        .header-actions { display: flex; align-items: center; gap: 6px; }
+        .admin-controls { display: flex; gap: 4px; }
+        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .search-box { background: #2a3942; border: none; padding: 5px 8px; border-radius: 6px; color: #fff; font-size: 11px; outline: none; width: 85px; }
 
         /* صندوق الرسائل */
-        .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b141a; background-image: radial-gradient(#111b21 1px, transparent 0); background-size: 24px 24px; }
+        .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b141a; background-image: radial-gradient(#111b21 1px, transparent 0); background-size: 24px 24px; -webkit-overflow-scrolling: touch; }
         
         /* تصميم الرسالة */
-        .message { max-width: 70%; padding: 8px 12px; border-radius: 8px; font-size: 14px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); }
+        .message { max-width: 75%; padding: 8px 12px; border-radius: 8px; font-size: 13px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); }
         .message.incoming { background-color: #202c33; align-self: flex-start; border-top-right-radius: 0; }
         .message.outgoing { background-color: #005c4b; align-self: flex-end; border-top-left-radius: 0; }
         
-        .message .sender { font-size: 12px; color: #53bdeb; margin-bottom: 3px; display: block; font-weight: bold; }
-        .message .content { margin-bottom: 14px; line-height: 1.4; }
-        .message .footer-info { position: absolute; bottom: 4px; left: 8px; display: flex; align-items: center; gap: 4px; }
-        .message .time { font-size: 10px; color: #8696a0; }
+        .message .sender { font-size: 11px; color: #53bdeb; margin-bottom: 2px; display: block; font-weight: bold; }
+        .message .content { margin-bottom: 12px; line-height: 1.4; }
+        .message .footer-info { position: absolute; bottom: 3px; left: 8px; display: flex; align-items: center; gap: 4px; }
+        .message .time { font-size: 9px; color: #8696a0; }
         
         .msg-actions { display: none; gap: 6px; margin-right: 6px; }
         .message:hover .msg-actions { display: inline-flex; }
         .msg-actions button { background: none; border: none; color: #8696a0; cursor: pointer; font-size: 10px; }
 
-        /* شريط الكتابة السفلي - مثبت وثابت بالأسفل */
-        .chat-input-area { background-color: #202c33; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; width: 100%; border-top: 1px solid #222d34; }
-        .chat-input-area input { flex: 1; background-color: #2a3942; border: none; padding: 12px 16px; border-radius: 8px; color: #f1f1f2; font-size: 14px; outline: none; }
-        .send-btn { background-color: #00a884; border: none; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        /* شريط الكتابة السفلي الثابت بدقة */
+        .chat-input-area { background-color: #202c33; padding: 8px 12px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; width: 100%; border-top: 1px solid #222d34; }
+        .chat-input-area input { flex: 1; background-color: #2a3942; border: none; padding: 10px 14px; border-radius: 8px; color: #f1f1f2; font-size: 14px; outline: none; }
+        .send-btn { background-color: #00a884; border: none; color: white; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
 
         /* نافذة إضافة عضو */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background-color: #202c33; padding: 20px; border-radius: 12px; width: 300px; display: flex; flex-direction: column; gap: 12px; border: 1px solid #222d34; }
-        .modal-content input { background-color: #2a3942; border: none; padding: 10px; border-radius: 6px; color: #fff; outline: none; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
-        .modal-actions button { padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+        .modal-content { background-color: #202c33; padding: 18px; border-radius: 12px; width: 280px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #222d34; }
+        .modal-content input { background-color: #2a3942; border: none; padding: 9px; border-radius: 6px; color: #fff; outline: none; font-size: 13px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 6px; }
+        .modal-actions button { padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 12px; }
         .btn-save { background: #00a884; color: white; }
         .btn-cancel { background: #374248; color: #fff; }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر -->
-    <div class="chat-header">
-        <div class="header-left">
-            <div class="group-avatar">ع</div>
-            <div class="group-info">
-                <h2>قروب العائلة ❤️</h2>
-                <p id="membersCount">الأعضاء: 4 نشطين</p>
+    <div class="app-container">
+        <!-- الهيدر -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="group-avatar">ع</div>
+                <div class="group-info">
+                    <h2>قروب العائلة ❤️</h2>
+                    <p id="membersCount">الأعضاء: 4 نشطين</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <input type="text" class="search-box" id="searchBox" placeholder="بحث..." onkeyup="filterMessages()">
+                <div class="admin-controls">
+                    <button class="admin-btn" onclick="openAddMemberModal()">➕ إضافة</button>
+                    <button class="admin-btn" onclick="toggleUserRole()" id="roleBtn">أدمن</button>
+                </div>
             </div>
         </div>
-        <div class="header-actions">
-            <input type="text" class="search-box" id="searchBox" placeholder="بحث..." onkeyup="filterMessages()">
-            <div class="admin-controls">
-                <button class="admin-btn" onclick="openAddMemberModal()">➕ إضافة</button>
-                <button class="admin-btn" onclick="toggleUserRole()" id="roleBtn">أدمن</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- صندوق الرسائل -->
-    <div class="chat-messages" id="messagesContainer">
-        <div class="message incoming" data-id="1" data-user="سامي">
-            <span class="sender">سامي</span>
-            <div class="content">حيا الله الجميع في القروب المطور الجديد</div>
-            <div class="footer-info"><span class="time">1:07 م</span></div>
-        </div>
-        <div class="message outgoing" data-id="2" data-user="عبدالرحمن">
-            <span class="sender">عبدالرحمن (أدمن)</span>
-            <div class="content">الله يحييك يا سامي، الواجهة صارت أسرع وأفضل بكثير.</div>
-            <div class="footer-info">
-                <span class="time">1:15 م</span>
-                <span class="msg-actions">
-                    <button onclick="editMessage(this)">تعديل</button>
-                    <button onclick="deleteMessage(this)">حذف</button>
-                </span>
+        <!-- صندوق الرسائل -->
+        <div class="chat-messages" id="messagesContainer">
+            <div class="message incoming" data-user="سامي">
+                <span class="sender">سامي</span>
+                <div class="content">حيا الله الجميع في القروب المطور الجديد</div>
+                <div class="footer-info"><span class="time">1:07 م</span></div>
+            </div>
+            <div class="message outgoing" data-user="عبدالرحمن">
+                <span class="sender">عبدالرحمن (أدمن)</span>
+                <div class="content">الله يحييك يا سامي، الواجهة صارت ممتازة وثابتة.</div>
+                <div class="footer-info">
+                    <span class="time">1:15 م</span>
+                    <span class="msg-actions">
+                        <button onclick="editMessage(this)">تعديل</button>
+                        <button onclick="deleteMessage(this)">حذف</button>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- شريط الإرسال (مثبت بأسفل الشاشة) -->
-    <div class="chat-input-area">
-        <input type="text" id="messageInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
-        <button class="send-btn" onclick="sendMessage()">➤</button>
+        <!-- شريط الإرسال (مثبت بأسفل الشاشة بدقة) -->
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
     </div>
 
     <!-- نافذة إضافة عضو -->
     <div class="modal" id="memberModal">
         <div class="modal-content">
-            <h3 style="color:#fff; font-size:15px;">إضافة عضو جديد للقروب</h3>
+            <h3 style="color:#fff; font-size:14px;">إضافة عضو جديد للقروب</h3>
             <input type="text" id="newMemberName" placeholder="اسم العضو الجديد...">
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAddMemberModal()">إلغاء</button>
