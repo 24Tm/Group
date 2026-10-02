@@ -6,35 +6,26 @@
     <title>تطبيق المحادثة السحابي - واتساب</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #0b141a; color: #e9edef; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        html, body { height: 100%; overflow: hidden; background-color: #0b141a; color: #e9edef; }
+        body { display: flex; flex-direction: column; }
         
         /* هيدر التطبيق */
-        .chat-header { background-color: #202c33; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; z-index: 10; }
+        .chat-header { background-color: #202c33; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; z-index: 10; flex-shrink: 0; }
         .header-left { display: flex; align-items: center; gap: 12px; }
         .group-avatar { width: 40px; height: 40px; background: #00a884; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 18px; }
         .group-info h2 { font-size: 16px; color: #f1f1f2; }
         .group-info p { font-size: 12px; color: #8696a0; }
 
-        /* أزرار تحكم الأدمن والبحث */
         .header-actions { display: flex; align-items: center; gap: 8px; }
         .admin-controls { display: flex; gap: 6px; }
-        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
-        .admin-btn:hover { background-color: #374248; }
-        
-        /* شريط البحث العلوي المصغر */
-        .search-box { background: #2a3942; border: none; padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; width: 120px; transition: 0.3s; }
-        .search-box:focus { width: 160px; }
+        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .search-box { background: #2a3942; border: none; padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; width: 100px; }
 
         /* صندوق الرسائل */
         .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b141a; background-image: radial-gradient(#111b21 1px, transparent 0); background-size: 24px 24px; }
         
-        /* مؤشر الكتابة */
-        .typing-indicator { font-size: 11px; color: #00a884; padding: 0 16px; height: 18px; display: none; }
-
         /* تصميم الرسالة */
-        .message { max-width: 70%; padding: 8px 12px; border-radius: 8px; font-size: 14px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
+        .message { max-width: 70%; padding: 8px 12px; border-radius: 8px; font-size: 14px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); }
         .message.incoming { background-color: #202c33; align-self: flex-start; border-top-right-radius: 0; }
         .message.outgoing { background-color: #005c4b; align-self: flex-end; border-top-left-radius: 0; }
         
@@ -43,23 +34,18 @@
         .message .footer-info { position: absolute; bottom: 4px; left: 8px; display: flex; align-items: center; gap: 4px; }
         .message .time { font-size: 10px; color: #8696a0; }
         
-        /* خيارات الحذف والتعديل داخل الرسالة */
         .msg-actions { display: none; gap: 6px; margin-right: 6px; }
         .message:hover .msg-actions { display: inline-flex; }
         .msg-actions button { background: none; border: none; color: #8696a0; cursor: pointer; font-size: 10px; }
-        .msg-actions button:hover { color: #f1f1f2; }
 
-        /* شريط الكتابة السفلي */
-        .chat-input-area { background-color: #202c33; padding: 10px 16px; display: flex; align-items: center; gap: 12px; }
+        /* شريط الكتابة السفلي - مثبت وثابت بالأسفل */
+        .chat-input-area { background-color: #202c33; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; width: 100%; border-top: 1px solid #222d34; }
         .chat-input-area input { flex: 1; background-color: #2a3942; border: none; padding: 12px 16px; border-radius: 8px; color: #f1f1f2; font-size: 14px; outline: none; }
-        .chat-input-area input::placeholder { color: #8696a0; }
-        .send-btn { background-color: #00a884; border: none; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; transition: 0.2s; }
-        .send-btn:hover { background-color: #008f72; }
+        .send-btn { background-color: #00a884; border: none; color: white; width: 42px; height: 42px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
 
-        /* نافذة منبثقة (Modal) لإضافة أعضاء */
+        /* نافذة إضافة عضو */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100; }
         .modal-content { background-color: #202c33; padding: 20px; border-radius: 12px; width: 300px; display: flex; flex-direction: column; gap: 12px; border: 1px solid #222d34; }
-        .modal-content h3 { color: #f1f1f2; font-size: 16px; }
         .modal-content input { background-color: #2a3942; border: none; padding: 10px; border-radius: 6px; color: #fff; outline: none; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
         .modal-actions button { padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
@@ -75,11 +61,11 @@
             <div class="group-avatar">ع</div>
             <div class="group-info">
                 <h2>قروب العائلة ❤️</h2>
-                <p id="membersCount">الأعضاء: 3 نشطين</p>
+                <p id="membersCount">الأعضاء: 4 نشطين</p>
             </div>
         </div>
         <div class="header-actions">
-            <input type="text" class="search-box" id="searchBox" placeholder="بحث في الرسائل..." onkeyup="filterMessages()">
+            <input type="text" class="search-box" id="searchBox" placeholder="بحث..." onkeyup="filterMessages()">
             <div class="admin-controls">
                 <button class="admin-btn" onclick="openAddMemberModal()">➕ إضافة</button>
                 <button class="admin-btn" onclick="toggleUserRole()" id="roleBtn">أدمن</button>
@@ -107,19 +93,16 @@
         </div>
     </div>
 
-    <!-- مؤشر الكتابة -->
-    <div class="typing-indicator" id="typingIndicator">جاري الكتابة...</div>
-
-    <!-- شريط الإرسال -->
+    <!-- شريط الإرسال (مثبت بأسفل الشاشة) -->
     <div class="chat-input-area">
-        <input type="text" id="messageInput" placeholder="اكتب رسالة..." oninput="showTyping()" onkeypress="checkEnter(event)">
+        <input type="text" id="messageInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendMessage()">➤</button>
     </div>
 
     <!-- نافذة إضافة عضو -->
     <div class="modal" id="memberModal">
         <div class="modal-content">
-            <h3>إضافة عضو جديد للقروب</h3>
+            <h3 style="color:#fff; font-size:15px;">إضافة عضو جديد للقروب</h3>
             <input type="text" id="newMemberName" placeholder="اسم العضو الجديد...">
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeAddMemberModal()">إلغاء</button>
@@ -131,27 +114,20 @@
     <script>
         let isAdmin = true; 
         let currentUser = "عبدالرحمن";
-        let membersList = ["سامي", "عبدالرحمن", "خالد عويمر"];
-        let typingTimeout;
+        let membersList = ["سامي", "عبدالرحمن", "خالد عويمر", "عضو 3", "عضو 4"];
 
         function toggleUserRole() {
             isAdmin = !isAdmin;
             currentUser = isAdmin ? "عبدالرحمن" : "عضو عادي";
             document.getElementById('roleBtn').innerText = isAdmin ? "أدمن" : "عضو";
-            alert("تم تبديل الصلاحية إلى: " + (isAdmin ? "أدمن (مشرف)" : "عضو عادي"));
         }
 
         function openAddMemberModal() {
-            if(!isAdmin) {
-                alert("عذراً، هذه الصلاحية مخصصة للأدمن فقط!");
-                return;
-            }
+            if(!isAdmin) { alert("عذراً، للأدمن فقط!"); return; }
             document.getElementById('memberModal').style.display = 'flex';
         }
 
-        function closeAddMemberModal() {
-            document.getElementById('memberModal').style.display = 'none';
-        }
+        function closeAddMemberModal() { document.getElementById('memberModal').style.display = 'none'; }
 
         function addMember() {
             const nameInput = document.getElementById('newMemberName');
@@ -163,31 +139,16 @@
             alert("تمت إضافة العضو بنجاح!");
         }
 
-        function showTyping() {
-            const indicator = document.getElementById('typingIndicator');
-            indicator.style.display = 'block';
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 1500);
-        }
-
-        function checkEnter(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+        function checkEnter(e) { if (e.key === 'Enter') sendMessage(); }
 
         function sendMessage() {
             const input = document.getElementById('messageInput');
             const container = document.getElementById('messagesContainer');
             if(input.value.trim() === '') return;
 
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const msgId = Date.now();
-            
+            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const msgDiv = document.createElement('div');
             msgDiv.className = isAdmin ? 'message outgoing' : 'message incoming';
-            msgDiv.setAttribute('data-id', msgId);
             msgDiv.setAttribute('data-user', currentUser);
             
             msgDiv.innerHTML = `
@@ -204,47 +165,29 @@
             container.appendChild(msgDiv);
             input.value = '';
             container.scrollTop = container.scrollHeight;
-            document.getElementById('typingIndicator').style.display = 'none';
         }
 
         function deleteMessage(btn) {
             const msgDiv = btn.closest('.message');
-            const msgUser = msgDiv.getAttribute('data-user');
-            
-            if (isAdmin || msgUser === currentUser) {
-                if(confirm("هل تريد حذف هذه الرسالة؟")) {
-                    msgDiv.remove();
-                }
-            } else {
-                alert("لا يمكنك حذف رسائل الآخرين!");
-            }
+            if (isAdmin || msgDiv.getAttribute('data-user') === currentUser) {
+                if(confirm("حذف الرسالة؟")) msgDiv.remove();
+            } else { alert("لا يمكنك حذف رسائل الآخرين!"); }
         }
 
         function editMessage(btn) {
             const msgDiv = btn.closest('.message');
-            const msgUser = msgDiv.getAttribute('data-user');
             const contentDiv = msgDiv.querySelector('.content');
-
-            if (msgUser === currentUser || isAdmin) {
+            if (msgDiv.getAttribute('data-user') === currentUser || isAdmin) {
                 const newText = prompt("تعديل الرسالة:", contentDiv.innerText);
-                if(newText !== null && newText.trim() !== "") {
-                    contentDiv.innerText = newText + " (معدلة)";
-                }
-            } else {
-                alert("يمكنك تعديل رسائلك الخاصة فقط!");
-            }
+                if(newText !== null && newText.trim() !== "") contentDiv.innerText = newText;
+            } else { alert("تعديل رسائلك الخاصة فقط!"); }
         }
 
         function filterMessages() {
             const query = document.getElementById('searchBox').value.toLowerCase();
-            const messages = document.querySelectorAll('.message');
-            messages.forEach(msg => {
+            document.querySelectorAll('.message').forEach(msg => {
                 const text = msg.querySelector('.content').innerText.toLowerCase();
-                if(text.includes(query)) {
-                    msg.style.display = 'block';
-                } else {
-                    msg.style.display = 'none';
-                }
+                msg.style.display = text.includes(query) ? 'block' : 'none';
             });
         }
     </script>
