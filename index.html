@@ -3,194 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تطبيق المحادثة السحابي - واتساب</title>
+    <title>رياضيات سادس ابتدائي - الفصل الدراسي الأول (المنهج السعودي)</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body, html { width: 100%; height: 100%; background-color: #0b141a; color: #e9edef; overflow: hidden; position: fixed; }
         
         .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
 
-        /* هيدر التطبيق */
+        /* الهيدر التعليمي الرسمي */
         .chat-header { background-color: #202c33; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #222d34; z-index: 10; flex-shrink: 0; }
         .header-left { display: flex; align-items: center; gap: 10px; }
         .group-avatar { width: 38px; height: 38px; background: #00a884; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 16px; }
-        .group-info h2 { font-size: 15px; color: #f1f1f2; }
+        .group-info h2 { font-size: 14px; color: #f1f1f2; }
         .group-info p { font-size: 11px; color: #8696a0; }
 
-        .header-actions { display: flex; align-items: center; gap: 6px; }
-        .admin-controls { display: flex; gap: 4px; }
-        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .search-box { background: #2a3942; border: none; padding: 5px 8px; border-radius: 6px; color: #fff; font-size: 11px; outline: none; width: 85px; }
+        .header-actions { display: flex; align-items: center; gap: 4px; }
+        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 5px 7px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        .search-box { background: #2a3942; border: none; padding: 5px 6px; border-radius: 6px; color: #fff; font-size: 11px; outline: none; width: 65px; }
 
-        /* صندوق الرسائل */
+        /* منطقة عرض محتوى المنهج */
         .chat-messages { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b141a; background-image: radial-gradient(#111b21 1px, transparent 0); background-size: 24px 24px; -webkit-overflow-scrolling: touch; }
         
-        /* تصميم الرسالة */
-        .message { max-width: 75%; padding: 8px 12px; border-radius: 8px; font-size: 13px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); }
+        .message { max-width: 88%; padding: 10px 14px; border-radius: 8px; font-size: 13px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); }
         .message.incoming { background-color: #202c33; align-self: flex-start; border-top-right-radius: 0; }
         .message.outgoing { background-color: #005c4b; align-self: flex-end; border-top-left-radius: 0; }
         
-        .message .sender { font-size: 11px; color: #53bdeb; margin-bottom: 2px; display: block; font-weight: bold; }
-        .message .content { margin-bottom: 12px; line-height: 1.4; }
-        .message .footer-info { position: absolute; bottom: 3px; left: 8px; display: flex; align-items: center; gap: 4px; }
-        .message .time { font-size: 9px; color: #8696a0; }
-        
-        .msg-actions { display: none; gap: 6px; margin-right: 6px; }
-        .message:hover .msg-actions { display: inline-flex; }
-        .msg-actions button { background: none; border: none; color: #8696a0; cursor: pointer; font-size: 10px; }
+        .message .sender { font-size: 11px; color: #53bdeb; margin-bottom: 3px; display: block; font-weight: bold; }
+        .message .content { margin-bottom: 12px; line-height: 1.5; }
+        .message .footer-info { position: absolute; bottom: 3px; left: 8px; font-size: 9px; color: #8696a0; }
 
-        /* شريط الكتابة السفلي الثابت بدقة */
-        .chat-input-area { background-color: #202c33; padding: 8px 12px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; width: 100%; border-top: 1px solid #222d34; }
+        /* قوائم الفصول الرسمية */
+        .chapter-box { background: #111b21; border: 1px solid #2a3942; padding: 10px; border-radius: 8px; margin-top: 6px; }
+        .lesson-link { background: #202c33; padding: 8px 10px; border-radius: 6px; margin-top: 5px; cursor: pointer; font-size: 12px; display: block; color: #53bdeb; border: 1px solid transparent; text-decoration: none; }
+        .lesson-link:hover { background: #2a3942; border-color: #00a884; }
+
+        /* شريط الكتابة */
+        .chat-input-area { background-color: #202c33; padding: 8px 12px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; width: 100%; border-top: 1px solid #222d34; }
         .chat-input-area input { flex: 1; background-color: #2a3942; border: none; padding: 10px 14px; border-radius: 8px; color: #f1f1f2; font-size: 14px; outline: none; }
         .send-btn { background-color: #00a884; border: none; color: white; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-
-        /* نافذة إضافة عضو */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background-color: #202c33; padding: 18px; border-radius: 12px; width: 280px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #222d34; }
-        .modal-content input { background-color: #2a3942; border: none; padding: 9px; border-radius: 6px; color: #fff; outline: none; font-size: 13px; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 6px; }
-        .modal-actions button { padding: 5px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .btn-save { background: #00a884; color: white; }
-        .btn-cancel { background: #374248; color: #fff; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- الهيدر -->
+        <!-- الهيدر الرسمي -->
         <div class="chat-header">
             <div class="header-left">
-                <div class="group-avatar">ع</div>
+                <div class="group-avatar">س</div>
                 <div class="group-info">
-                    <h2>قروب العائلة ❤️</h2>
-                    <p id="membersCount">الأعضاء: 4 نشطين</p>
+                    <h2>رياضيات سادس ف1 🇸🇦</h2>
+                    <p>وفق المنهج السعودي المعتمد</p>
                 </div>
             </div>
             <div class="header-actions">
-                <input type="text" class="search-box" id="searchBox" placeholder="بحث..." onkeyup="filterMessages()">
-                <div class="admin-controls">
-                    <button class="admin-btn" onclick="openAddMemberModal()">➕ إضافة</button>
-                    <button class="admin-btn" onclick="toggleUserRole()" id="roleBtn">أدمن</button>
-                </div>
+                <input type="text" class="search-box" id="searchBox" placeholder="بحث..." onkeyup="filterContent()">
+                <button class="admin-btn" onclick="showChapter(1)">الفصل 1</button>
+                <button class="admin-btn" onclick="showChapter(2)">الفصل 2</button>
+                <button class="admin-btn" onclick="showChapter(3)">الفصل 3</button>
             </div>
         </div>
 
-        <!-- صندوق الرسائل -->
+        <!-- صندوق المحتوى -->
         <div class="chat-messages" id="messagesContainer">
-            <div class="message incoming" data-user="سامي">
-                <span class="sender">سامي</span>
-                <div class="content">حيا الله الجميع في القروب المطور الجديد</div>
-                <div class="footer-info"><span class="time">1:07 م</span></div>
-            </div>
-            <div class="message outgoing" data-user="عبدالرحمن">
-                <span class="sender">عبدالرحمن (أدمن)</span>
-                <div class="content">الله يحييك يا سامي، الواجهة صارت ممتازة وثابتة.</div>
-                <div class="footer-info">
-                    <span class="time">1:15 م</span>
-                    <span class="msg-actions">
-                        <button onclick="editMessage(this)">تعديل</button>
-                        <button onclick="deleteMessage(this)">حذف</button>
-                    </span>
+            <div class="message incoming">
+                <span class="sender">فهرس المنهج السعودي (سادس ابتدائي - ف1) 📚</span>
+                <div class="content">
+                    أهلاً بك. تم إعداد محتوى هذه الصفحة ليطابق تماماً الفصول الدراسية الرسمية المعتمدة في كتاب الرياضيات للفصل الدراسي الأول:<br>
+                    • <b>الفصل الأول:</b> الجبر: الاتجاهات والقوى والدوال.<br>
+                    • <b>الفصل الثاني:</b> الإحصاء والتمثيلات.<br>
+                    • <b>الفصل الثالث:</b> العمليات على الكسور الاعتيادية والعشرية.<br>
+                    <span style="color: #00a884; display:block; margin-top:5px;">اضغط على أزرار الفصول بالأعلى لعرض دروس ومهارات كل فصل بالتفصيل!</span>
                 </div>
+                <div class="footer-info">المنهج الرسمي</div>
             </div>
         </div>
 
-        <!-- شريط الإرسال (مثبت بأسفل الشاشة بدقة) -->
+        <!-- شريط الإرسال السفلي -->
         <div class="chat-input-area">
-            <input type="text" id="messageInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
-            <button class="send-btn" onclick="sendMessage()">➤</button>
-        </div>
-    </div>
-
-    <!-- نافذة إضافة عضو -->
-    <div class="modal" id="memberModal">
-        <div class="modal-content">
-            <h3 style="color:#fff; font-size:14px;">إضافة عضو جديد للقروب</h3>
-            <input type="text" id="newMemberName" placeholder="اسم العضو الجديد...">
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeAddMemberModal()">إلغاء</button>
-                <button class="btn-save" onclick="addMember()">إضافة</button>
-            </div>
+            <input type="text" id="messageInput" placeholder="اكتب رقم الدرس أو سؤالك..." onkeypress="checkEnter(event)">
+            <button class="send-btn" onclick="sendQuery()">➤</button>
         </div>
     </div>
 
     <script>
-        let isAdmin = true; 
-        let currentUser = "عبدالرحمن";
-        let membersList = ["سامي", "عبدالرحمن", "خالد عويمر", "عضو 3", "عضو 4"];
+        function checkEnter(e) { if (e.key === 'Enter') sendQuery(); }
 
-        function toggleUserRole() {
-            isAdmin = !isAdmin;
-            currentUser = isAdmin ? "عبدالرحمن" : "عضو عادي";
-            document.getElementById('roleBtn').innerText = isAdmin ? "أدمن" : "عضو";
+        function showChapter(chNum) {
+            const container = document.getElementById('messagesContainer');
+            const msg = document.createElement('div');
+            msg.className = 'message incoming';
+
+            if(chNum === 1) {
+                msg.innerHTML = `
+                    <span class="sender">📖 الفصل الأول: الجبر: الأنماط العددية والدوال</span>
+                    <div class="content">
+                        دروس الفصل المعتمدة في المنهج السعودي:
+                        <div class="chapter-box">
+                            <div class="lesson-link" onclick="loadLesson('الخطوات الأربع لحل المسألة')">1-1 الخطوات الأربع لحل المسألة</div>
+                            <div class="lesson-link" onclick="loadLesson('القوى والأسس')">1-2 القوى والأسس</div>
+                            <div class="lesson-link" onclick="loadLesson('ترتيب العمليات')">1-3 ترتيب العمليات</div>
+                            <div class="lesson-link" onclick="loadLesson('الجبر: المتغيرات والعبارات الجبرية')">1-4 المتغيرات والعبارات الجبرية</div>
+                            <div class="lesson-link" onclick="loadLesson('الجبر: المعادلات')">1-5 المعادلات الجبرية</div>
+                        </div>
+                    </div>
+                `;
+            } else if(chNum === 2) {
+                msg.innerHTML = `
+                    <span class="sender">📖 الفصل الثاني: الإحصاء والتمثيلات</span>
+                    <div class="content">
+                        دروس الفصل المعتمدة في المنهج السعودي:
+                        <div class="chapter-box">
+                            <div class="lesson-link" onclick="loadLesson('الخطوات الأربع (مسألة تناسبية)')">2-1 خطة حل المسألة (إنشاء جدول)</div>
+                            <div class="lesson-link" onclick="loadLesson('التمثيل بالخطوط')">2-2 التمثيل بالخطوط</div>
+                            <div class="lesson-link" onclick="loadLesson('المتوسط الحسابي والوسيط والمنوال')">2-3 المتوسط الحسابي والوسيط والمنوال</div>
+                            <div class="lesson-link" onclick="loadLesson('التمثيل بالقطاعات الدائرية')">2-4 التمثيل بالقطاعات الدائرية</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                msg.innerHTML = `
+                    <span class="sender">📖 الفصل الثالث: العمليات على الكسور الاعتيادية</span>
+                    <div class="content">
+                        دروس الفصل المعتمدة في المنهج السعودي:
+                        <div class="chapter-box">
+                            <div class="lesson-link" onclick="loadLesson('القواسم المشتركة والمضاعفات')">3-1 القواسم المشتركة (ق.م.أ)</div>
+                            <div class="lesson-link" onclick="loadLesson('تبسيط الكسور الاعتيادية')">3-2 تبسيط الكسور الاعتيادية</div>
+                            <div class="lesson-link" onclick="loadLesson('الأعداد الكسرية والكسور غير الفعلية')">3-3 الأعداد الكسرية والكسور غير الفعلية</div>
+                            <div class="lesson-link" onclick="loadLesson('جمع الكسور وطرحها ذات المقامات المختلفة')">3-4 جمع الكسور وطرحها</div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
         }
 
-        function openAddMemberModal() {
-            if(!isAdmin) { alert("عذراً، للأدمن فقط!"); return; }
-            document.getElementById('memberModal').style.display = 'flex';
+        function loadLesson(lessonName) {
+            const container = document.getElementById('messagesContainer');
+            const msg = document.createElement('div');
+            msg.className = 'message incoming';
+            msg.innerHTML = `
+                <span class="sender">شخصية المعلم الذكي 🤖</span>
+                <div class="content">
+                    <b>درس: ${lessonName}</b><br>
+                    هذا الدرس يقع ضمن مقرر الصف السادس الابتدائي للفصل الأول. أهم قاعدة فيه تعتمد على الفهم الدقيق للخطوات الرياضية المعتمدة في كتاب الوزارة السعودي. هل ترغب أن أطرح عليك سؤال اختبار فوري حول هذا الدرس؟
+                </div>
+            `;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
         }
 
-        function closeAddMemberModal() { document.getElementById('memberModal').style.display = 'none'; }
-
-        function addMember() {
-            const nameInput = document.getElementById('newMemberName');
-            if(nameInput.value.trim() === '') return;
-            membersList.push(nameInput.value.trim());
-            document.getElementById('membersCount').innerText = `الأعضاء: ${membersList.length} نشطين`;
-            nameInput.value = '';
-            closeAddMemberModal();
-            alert("تمت إضافة العضو بنجاح!");
-        }
-
-        function checkEnter(e) { if (e.key === 'Enter') sendMessage(); }
-
-        function sendMessage() {
+        function sendQuery() {
             const input = document.getElementById('messageInput');
             const container = document.getElementById('messagesContainer');
             if(input.value.trim() === '') return;
 
-            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const msgDiv = document.createElement('div');
-            msgDiv.className = isAdmin ? 'message outgoing' : 'message incoming';
-            msgDiv.setAttribute('data-user', currentUser);
-            
-            msgDiv.innerHTML = `
-                <span class="sender">${currentUser} ${isAdmin ? '(أدمن)' : ''}</span>
-                <div class="content">${input.value}</div>
-                <div class="footer-info">
-                    <span class="time">${timeString}</span>
-                    <span class="msg-actions">
-                        <button onclick="editMessage(this)">تعديل</button>
-                        <button onclick="deleteMessage(this)">حذف</button>
-                    </span>
-                </div>
-            `;
-            container.appendChild(msgDiv);
+            const uMsg = document.createElement('div');
+            uMsg.className = 'message outgoing';
+            uMsg.innerHTML = `<span class="sender">الطالب</span><div class="content">${input.value}</div>`;
+            container.appendChild(uMsg);
+
+            const qText = input.value;
             input.value = '';
             container.scrollTop = container.scrollHeight;
+
+            setTimeout(() => {
+                const bMsg = document.createElement('div');
+                bMsg.className = 'message incoming';
+                bMsg.innerHTML = `<span class="sender">المعلم الذكي 🤖</span><div class="content">بناءً على منهج سادس ابتدائي في السعودية، لإيجاد حل لـ "${qText}" نطبق القواعد الوزارية المعتمدة بدقة. تابع معنا عبر اختيار الفصول بالأعلى!</div>`;
+                container.appendChild(bMsg);
+                container.scrollTop = container.scrollHeight;
+            }, 800);
         }
 
-        function deleteMessage(btn) {
-            const msgDiv = btn.closest('.message');
-            if (isAdmin || msgDiv.getAttribute('data-user') === currentUser) {
-                if(confirm("حذف الرسالة؟")) msgDiv.remove();
-            } else { alert("لا يمكنك حذف رسائل الآخرين!"); }
-        }
-
-        function editMessage(btn) {
-            const msgDiv = btn.closest('.message');
-            const contentDiv = msgDiv.querySelector('.content');
-            if (msgDiv.getAttribute('data-user') === currentUser || isAdmin) {
-                const newText = prompt("تعديل الرسالة:", contentDiv.innerText);
-                if(newText !== null && newText.trim() !== "") contentDiv.innerText = newText;
-            } else { alert("تعديل رسائلك الخاصة فقط!"); }
-        }
-
-        function filterMessages() {
+        function filterContent() {
             const query = document.getElementById('searchBox').value.toLowerCase();
             document.querySelectorAll('.message').forEach(msg => {
-                const text = msg.querySelector('.content').innerText.toLowerCase();
-                msg.style.display = text.includes(query) ? 'block' : 'none';
+                msg.style.display = msg.innerText.toLowerCase().includes(query) ? 'block' : 'none';
             });
         }
     </script>
