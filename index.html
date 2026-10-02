@@ -15,16 +15,26 @@
         .group-info h2 { font-size: 16px; color: #f1f1f2; }
         .group-info p { font-size: 12px; color: #8696a0; }
 
-        /* أزرار تحكم الأدمن */
-        .admin-controls { display: flex; gap: 8px; }
-        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s; }
+        /* أزرار تحكم الأدمن والبحث */
+        .header-actions { display: flex; align-items: center; gap: 8px; }
+        .admin-controls { display: flex; gap: 6px; }
+        .admin-btn { background-color: #2a3942; border: none; color: #00a884; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
         .admin-btn:hover { background-color: #374248; }
+        
+        /* شريط البحث العلوي المصغر */
+        .search-box { background: #2a3942; border: none; padding: 6px 10px; border-radius: 6px; color: #fff; font-size: 12px; outline: none; width: 120px; transition: 0.3s; }
+        .search-box:focus { width: 160px; }
 
         /* صندوق الرسائل */
         .chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background-color: #0b141a; background-image: radial-gradient(#111b21 1px, transparent 0); background-size: 24px 24px; }
         
+        /* مؤشر الكتابة */
+        .typing-indicator { font-size: 11px; color: #00a884; padding: 0 16px; height: 18px; display: none; }
+
         /* تصميم الرسالة */
-        .message { max-width: 70%; padding: 8px 12px; border-radius: 8px; font-size: 14px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); }
+        .message { max-width: 70%; padding: 8px 12px; border-radius: 8px; font-size: 14px; position: relative; word-wrap: break-word; box-shadow: 0 1px 0.5px rgba(0,0,0,0.3); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
         .message.incoming { background-color: #202c33; align-self: flex-start; border-top-right-radius: 0; }
         .message.outgoing { background-color: #005c4b; align-self: flex-end; border-top-left-radius: 0; }
         
@@ -68,25 +78,25 @@
                 <p id="membersCount">الأعضاء: 3 نشطين</p>
             </div>
         </div>
-        <div class="admin-controls">
-            <button class="admin-btn" onclick="openAddMemberModal()">➕ إضافة عضو</button>
-            <button class="admin-btn" onclick="toggleUserRole()" id="roleBtn">وضع الأدمن: مفعل</button>
+        <div class="header-actions">
+            <input type="text" class="search-box" id="searchBox" placeholder="بحث في الرسائل..." onkeyup="filterMessages()">
+            <div class="admin-controls">
+                <button class="admin-btn" onclick="openAddMemberModal()">➕ إضافة</button>
+                <button class="admin-btn" onclick="toggleUserRole()" id="roleBtn">أدمن</button>
+            </div>
         </div>
     </div>
 
     <!-- صندوق الرسائل -->
     <div class="chat-messages" id="messagesContainer">
-        <!-- رسائل تجريبية -->
         <div class="message incoming" data-id="1" data-user="سامي">
             <span class="sender">سامي</span>
-            <div class="content">امين يارب</div>
-            <div class="footer-info">
-                <span class="time">1:07 م</span>
-            </div>
+            <div class="content">حيا الله الجميع في القروب المطور الجديد</div>
+            <div class="footer-info"><span class="time">1:07 م</span></div>
         </div>
         <div class="message outgoing" data-id="2" data-user="عبدالرحمن">
             <span class="sender">عبدالرحمن (أدمن)</span>
-            <div class="content">حياكم الله جميعاً في القروب الجديد.</div>
+            <div class="content">الله يحييك يا سامي، الواجهة صارت أسرع وأفضل بكثير.</div>
             <div class="footer-info">
                 <span class="time">1:15 م</span>
                 <span class="msg-actions">
@@ -97,9 +107,12 @@
         </div>
     </div>
 
+    <!-- مؤشر الكتابة -->
+    <div class="typing-indicator" id="typingIndicator">جاري الكتابة...</div>
+
     <!-- شريط الإرسال -->
     <div class="chat-input-area">
-        <input type="text" id="messageInput" placeholder="اكتب رسالة..." onkeypress="checkEnter(event)">
+        <input type="text" id="messageInput" placeholder="اكتب رسالة..." oninput="showTyping()" onkeypress="checkEnter(event)">
         <button class="send-btn" onclick="sendMessage()">➤</button>
     </div>
 
@@ -119,11 +132,12 @@
         let isAdmin = true; 
         let currentUser = "عبدالرحمن";
         let membersList = ["سامي", "عبدالرحمن", "خالد عويمر"];
+        let typingTimeout;
 
         function toggleUserRole() {
             isAdmin = !isAdmin;
             currentUser = isAdmin ? "عبدالرحمن" : "عضو عادي";
-            document.getElementById('roleBtn').innerText = isAdmin ? "وضع الأدمن: مفعل" : "وضع الأدمن: معطل";
+            document.getElementById('roleBtn').innerText = isAdmin ? "أدمن" : "عضو";
             alert("تم تبديل الصلاحية إلى: " + (isAdmin ? "أدمن (مشرف)" : "عضو عادي"));
         }
 
@@ -149,6 +163,15 @@
             alert("تمت إضافة العضو بنجاح!");
         }
 
+        function showTyping() {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.style.display = 'block';
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 1500);
+        }
+
         function checkEnter(e) {
             if (e.key === 'Enter') sendMessage();
         }
@@ -158,7 +181,10 @@
             const container = document.getElementById('messagesContainer');
             if(input.value.trim() === '') return;
 
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const msgId = Date.now();
+            
             const msgDiv = document.createElement('div');
             msgDiv.className = isAdmin ? 'message outgoing' : 'message incoming';
             msgDiv.setAttribute('data-id', msgId);
@@ -168,7 +194,7 @@
                 <span class="sender">${currentUser} ${isAdmin ? '(أدمن)' : ''}</span>
                 <div class="content">${input.value}</div>
                 <div class="footer-info">
-                    <span class="time">الآن</span>
+                    <span class="time">${timeString}</span>
                     <span class="msg-actions">
                         <button onclick="editMessage(this)">تعديل</button>
                         <button onclick="deleteMessage(this)">حذف</button>
@@ -178,6 +204,7 @@
             container.appendChild(msgDiv);
             input.value = '';
             container.scrollTop = container.scrollHeight;
+            document.getElementById('typingIndicator').style.display = 'none';
         }
 
         function deleteMessage(btn) {
@@ -201,13 +228,25 @@
             if (msgUser === currentUser || isAdmin) {
                 const newText = prompt("تعديل الرسالة:", contentDiv.innerText);
                 if(newText !== null && newText.trim() !== "") {
-                    contentDiv.innerText = newText;
+                    contentDiv.innerText = newText + " (معدلة)";
                 }
             } else {
                 alert("يمكنك تعديل رسائلك الخاصة فقط!");
             }
         }
+
+        function filterMessages() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(msg => {
+                const text = msg.querySelector('.content').innerText.toLowerCase();
+                if(text.includes(query)) {
+                    msg.style.display = 'block';
+                } else {
+                    msg.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>
-
